@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <button onclick="logout();">Logout</button>
+        <p>Dodajanje novega uporabnika</p>
+        <form onsubmit="event.preventDefault(); userLogin();">
+            <label for="name">Ime:</label><br>
+            <input type="text" id="name" size="25" maxlength="20"><br><br>
+            <label for="surname">Priimek:</label><br>
+            <input type="text" id="surname" size="25" maxlength="20"><br><br>
+            <label for="email">Email:</label><br>
+            <input type="text" id="email" size="55" maxlength="50"><br><br>
+            <label for="password">Začasno geslo:</label><br>
+            <input type="password" id="password" size="55" maxlength="50"><br><br>
+            <label for="roles">Tip uporabnika:</label><br>
+            <select id="roles">
+                <option value="1">Administrator</option>
+                <option value="2">Uporabnik</option>
+            </select><br><br>
+            <input type="submit" value="Ustvari uporabnika">
+        </form>
+    </body>
+    <script type="text/javascript">
+        function userLogin(){
+            var name = document.getElementById("name").value;
+            var surname = document.getElementById("surname").value; 
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            var roles = document.getElementById("roles").value;
+        
+            var xhr= new XMLHttpRequest();
+            xhr.open("POST", "users.php", true); 
+			xhr.setRequestHeader("Accept", "application/json");
+			xhr.setRequestHeader('Content-type', 'application/json');
+				
+			xhr.onreadystatechange = function (){
+			    if (xhr.readyState === 4){
+					if(xhr.status === 200){
+                        document.getElementById("name").value = "";
+                        document.getElementById("surname").value =""; 
+                        document.getElementById("email").value = "";
+                        document.getElementById("password").value = "";
+                        document.getElementById("roles"). value = "";
+                        alert("Vnos uporabnika uspešen!");
+					}else{
+					    alert("Napaka pri vnosu uporabnika!");
+					}
+				}
+            };  
+			xhr.send(JSON.stringify({"name":name, "surname":surname, "email":email, "password":password, "roles":roles}));
+        };
+
+        function logout(){
+            window.localStorage.clear();	
+            window.location = "login.html";
+        }
+    </script>
+</html>

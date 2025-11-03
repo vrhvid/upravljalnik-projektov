@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <form onsubmit="event.preventDefault(); addTask();">
+            <label for="name">Naslov:</label><br>
+            <input id="name" type="text" size="55" maxlength="50"><br><br>
+            <label for="description">Opis:</label><br>
+            <input id="description" type="text" size="505" maxlength="500"><br><br>
+            <label for="status">Status:</label><br>
+            <select id="status">
+                <option id="1" value=1>Aktiven</option>
+                <option id="2" value=2>Na čakanju</option>
+                <option id="3" value=3>Ideja</option>
+                <option id="4" value=4>Arhiviran</option>
+            </select><br><br>
+            <label for="extResources">Zunanji viri</label><br>
+            <input id="extResources" type="text"><br><br>
+            <label for="intResources">Lastni viri</label><br>
+            <input id="intResources" type="text"><br><br>
+            <input type="submit" value="Dodaj projekt">
+        </form>
+        <button onclick="window.location = 'tasks.html';">Nazaj</button>
+    </body>
+    <script>
+        window.onload = function(){
+            document.getElementById(window.localStorage.getItem("status")).setAttribute("selected", "selected");
+        }
+        
+        function addTask(){
+            var user = window.localStorage.getItem("id");
+            var name = document.getElementById("name").value;
+            var description = document.getElementById("description").value; 
+            var status = Number(document.getElementById("status").value);
+            var extResources = document.getElementById("extResources").value;
+            if(extResources == ""){
+                extResources = null;
+            }
+            var intResources = document.getElementById("intResources").value;
+            if(intResources == ""){
+                intResources = null;
+            }
+            if(window.localStorage.getItem("subTaskParent") === null){
+                var parent = window.localStorage.getItem("parent");
+            } else {
+                var parent = window.localStorage.getItem("subTaskParent");
+            }
+        
+            var xhr= new XMLHttpRequest();
+
+            var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
+            url.searchParams.set("action", 3);
+
+            xhr.open("POST", url, true); 
+			xhr.setRequestHeader("Accept", "application/json");
+			xhr.setRequestHeader('Content-type', 'application/json');
+				
+			xhr.onreadystatechange = function (){
+			    if (xhr.readyState === 4){
+					if(xhr.status === 200){
+                        document.getElementById("name").value = "";
+                        document.getElementById("description").value = ""; 
+                        document.getElementById(window.localStorage.getItem("status")).setAttribute("selected", "selected");
+                        document.getElementById("extResources").value = "";
+                        document.getElementById("intResources").value = "";
+
+                        alert("Vnos projekta uspešen!");
+					}else{
+					    alert("Napaka pri vnosu projekta!");
+					}
+				}
+            };  
+			xhr.send(JSON.stringify({"user":user, "name":name, "description":description, "parent":parent, "status":status, "priority":1, "extResources":extResources, "intResources":intResources}));
+        };
+    </script>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div id="activeTasksDiv">
+            <p>Aktivni projekti</p>
+            <button onclick="addRootTask(1)">Nov aktiven projekt</button>
+        </div>
+        <div id="onHoldTasksDiv">
+            <p>Projekti na čakanju</p>
+            <button onclick="addRootTask(2)">Nov projekt na čakanju</button>
+        </div>
+        <div id="ideaTasksDiv">
+            <p>Ideje za projekte</p>
+            <button onclick="addRootTask(3)">Nova ideja za projekt</button>
+        </div>
+        <div id="archiveTasksDiv">
+            <p>Arhivirani projekti</p>
+        </div>
+        
+    </body>
+    <script>
+        window.onload = function(){
+            window.localStorage.removeItem("status");
+            window.localStorage.removeItem("parent");
+            window.localStorage.removeItem("subTaskParent");
+
+            var status = 1
+            var xhr1= new XMLHttpRequest();
+            
+            var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
+            url.searchParams.set("action", 1);
+
+            xhr1.open("POST", url, true); 
+			xhr1.setRequestHeader("Accept", "application/json");
+			xhr1.setRequestHeader('Content-type', 'application/json');
+				
+			xhr1.onreadystatechange = function (){
+			    if (xhr1.readyState === 4){
+					if(xhr1.status === 200){
+                        var response = JSON.parse(xhr1.responseText);
+                        if(response != null){
+                            tasks = [];
+                            
+                            for(var i = 0; i < response.length; i++){
+                                tasks.push({id:response[i]["taskid"], name:response[i]["name"], description:response[i]["description"], parent:response[i]["parent"],priority:response[i]["priority"], internalResources:response[i]["internalResources"], externalResources:response[i]["externalResources"], completed:response[i]["completed"]});
+                            }
+                            tasks = sortTasks(tasks) 
+                            var previousPriority = []
+                            var previousParent = []
+                            for(var i = 0; i < tasks.length; i++){
+                                task = document.createElement("p");
+                                task.setAttribute("onclick", "openTask(\"" + tasks[i].id + "\")");
+                                
+                                if(tasks[i].parent == "0"){
+                                    if(tasks[i].completed){
+                                        task.innerHTML = "<p><del>" + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                    } else {
+                                        task.innerHTML = "<p>" + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                    }
+                                    previousParent = [tasks[i].id]
+                                    previousPriority = [tasks[i].priority]
+                                } else {
+                                    while(true){
+                                        if(tasks[i].parent == previousParent[previousParent.length - 1]){
+                                            var priorityString = ""
+                                            for(var j = 0; j < previousPriority.length; j++){
+                                                priorityString = priorityString + previousPriority[j] + ". "
+                                            }
+                                            if(tasks[i].completed){
+                                                task.innerHTML = "<p><del>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                            } else {
+                                                task.innerHTML = "<p>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                            }
+                                            previousParent.push(tasks[i].id)
+                                            previousPriority.push(tasks[i].priority)
+                                            break
+                                        } else {
+                                            previousPriority.pop()
+                                            previousParent.pop()
+                                        }
+                                    }
+                                }
+                                
+                                subTaskButton = document.createElement("button")
+                                subTaskButton.innerHTML = "Dodaj podnalogo"
+                                subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")") 
+                                    
+                                document.getElementById("activeTasksDiv").appendChild(task);
+                                document.getElementById("activeTasksDiv").appendChild(subTaskButton);
+                            }
+					    }
+					}
+                    
+				}
+            };  
+            var param = JSON.stringify({"user":window.localStorage.getItem("id"), "status":status})
+			xhr1.send(param);
+
+            var xhr2= new XMLHttpRequest();
+            
+            var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
+            url.searchParams.set("action", 1);
+
+            xhr2.open("POST", url, true); 
+			xhr2.setRequestHeader("Accept", "application/json");
+			xhr2.setRequestHeader('Content-type', 'application/json');
+				
+			xhr2.onreadystatechange = function (){
+			    if (xhr2.readyState === 4){
+					if(xhr2.status === 200){
+                        var response = JSON.parse(xhr2.responseText);
+                        if(response != null){
+                            tasks = [];
+                            
+                            for(var i = 0; i < response.length; i++){
+                                tasks.push({id:response[i]["taskid"], name:response[i]["name"], description:response[i]["description"], parent:response[i]["parent"],priority:response[i]["priority"], internalResources:response[i]["internalResources"], externalResources:response[i]["externalResources"], completed:response[i]["completed"]});
+                            }
+                            tasks = sortTasks(tasks) 
+                            var previousPriority = []
+                            var previousParent = []
+                            for(var i = 0; i < tasks.length; i++){
+                                task = document.createElement("p");
+                                task.setAttribute("onclick", "openTask(\"" + tasks[i].id + "\")");
+                                
+                                if(tasks[i].parent == "0"){
+                                    if(tasks[i].completed){
+                                        task.innerHTML = "<p><del>" + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                    } else {
+                                        task.innerHTML = "<p>" + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                    }
+                                    previousParent = [tasks[i].id]
+                                    previousPriority = [tasks[i].priority]
+                                } else {
+                                    while(true){
+                                        if(tasks[i].parent == previousParent[previousParent.length - 1]){
+                                            var priorityString = ""
+                                            for(var j = 0; j < previousPriority.length; j++){
+                                                priorityString = priorityString + previousPriority[j] + ". "
+                                            }
+                                            if(tasks[i].completed){
+                                                task.innerHTML = "<p><del>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                            } else {
+                                                task.innerHTML = "<p>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                            }
+                                            previousParent.push(tasks[i].id)
+                                            previousPriority.push(tasks[i].priority)
+                                            break
+                                        } else {
+                                            previousPriority.pop()
+                                            previousParent.pop()
+                                        }
+                                    }
+                                }
+                                
+                                subTaskButton = document.createElement("button")
+                                subTaskButton.innerHTML = "Dodaj podnalogo"
+                                subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")") 
+                                    
+                                document.getElementById("activeTasksDiv").appendChild(task);
+                                document.getElementById("activeTasksDiv").appendChild(subTaskButton);
+                            }
+					    }
+					}
+                    
+				}
+            };  
+			xhr2.send(JSON.stringify({"user":window.localStorage.getItem("id"), "status":2}));
+
+            var xhr3= new XMLHttpRequest();
+            
+            var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
+            url.searchParams.set("action", 1);
+
+            xhr3.open("POST", url, true); 
+			xhr3.setRequestHeader("Accept", "application/json");
+			xhr3.setRequestHeader('Content-type', 'application/json');
+				
+			xhr3.onreadystatechange = function (){
+			    if (xhr3.readyState === 4){
+					if(xhr3.status === 200){
+                        var response = JSON.parse(xhr3.responseText);
+                        if(response != null){
+                            tasks = [];
+                            
+                            for(var i = 0; i < response.length; i++){
+                                tasks.push({id:response[i]["taskid"], name:response[i]["name"], description:response[i]["description"], parent:response[i]["parent"],priority:response[i]["priority"], internalResources:response[i]["internalResources"], externalResources:response[i]["externalResources"], completed:response[i]["completed"]});
+                            }
+                            tasks = sortTasks(tasks) 
+                            var previousPriority = []
+                            var previousParent = []
+                            for(var i = 0; i < tasks.length; i++){
+                                task = document.createElement("p");
+                                task.setAttribute("onclick", "openTask(\"" + tasks[i].id + "\")");
+                                
+                                if(tasks[i].parent == "0"){
+                                    if(tasks[i].completed){
+                                        task.innerHTML = "<p><del>" + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                    } else {
+                                        task.innerHTML = "<p>" + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                    }
+                                    previousParent = [tasks[i].id]
+                                    previousPriority = [tasks[i].priority]
+                                } else {
+                                    while(true){
+                                        if(tasks[i].parent == previousParent[previousParent.length - 1]){
+                                            var priorityString = ""
+                                            for(var j = 0; j < previousPriority.length; j++){
+                                                priorityString = priorityString + previousPriority[j] + ". "
+                                            }
+                                            if(tasks[i].completed){
+                                                task.innerHTML = "<p><del>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                            } else {
+                                                task.innerHTML = "<p>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                            }
+                                            previousParent.push(tasks[i].id)
+                                            previousPriority.push(tasks[i].priority)
+                                            break
+                                        } else {
+                                            previousPriority.pop()
+                                            previousParent.pop()
+                                        }
+                                    }
+                                }
+                                
+                                subTaskButton = document.createElement("button")
+                                subTaskButton.innerHTML = "Dodaj podnalogo"
+                                subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")") 
+                                    
+                                document.getElementById("activeTasksDiv").appendChild(task);
+                                document.getElementById("activeTasksDiv").appendChild(subTaskButton);
+                            }
+					    }
+					}
+                    
+				}
+            };  
+			xhr3.send(JSON.stringify({"user":window.localStorage.getItem("id"), "status":3}));
+
+            var xhr4= new XMLHttpRequest();
+            
+            var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
+            url.searchParams.set("action", 1);
+
+            xhr4.open("POST", url, true); 
+			xhr4.setRequestHeader("Accept", "application/json");
+			xhr4.setRequestHeader('Content-type', 'application/json');
+				
+			xhr4.onreadystatechange = function (){
+			    if (xhr4.readyState === 4){
+					if(xhr4.status === 200){
+                        var response = JSON.parse(xhr4.responseText);
+                        if(response != null){
+                            tasks = [];
+                            
+                            for(var i = 0; i < response.length; i++){
+                                tasks.push({id:response[i]["taskid"], name:response[i]["name"], description:response[i]["description"], parent:response[i]["parent"],priority:response[i]["priority"], internalResources:response[i]["internalResources"], externalResources:response[i]["externalResources"], completed:response[i]["completed"]});
+                            }
+                            tasks = sortTasks(tasks) 
+                            var previousPriority = []
+                            var previousParent = []
+                            for(var i = 0; i < tasks.length; i++){
+                                task = document.createElement("p");
+                                task.setAttribute("onclick", "openTask(\"" + tasks[i].id + "\")");
+                                
+                                if(tasks[i].parent == "0"){
+                                    if(tasks[i].completed){
+                                        task.innerHTML = "<p><del>" + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                    } else {
+                                        task.innerHTML = "<p>" + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                    }
+                                    previousParent = [tasks[i].id]
+                                    previousPriority = [tasks[i].priority]
+                                } else {
+                                    while(true){
+                                        if(tasks[i].parent == previousParent[previousParent.length - 1]){
+                                            var priorityString = ""
+                                            for(var j = 0; j < previousPriority.length; j++){
+                                                priorityString = priorityString + previousPriority[j] + ". "
+                                            }
+                                            if(tasks[i].completed){
+                                                task.innerHTML = "<p><del>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</del></p>"
+                                            } else {
+                                                task.innerHTML = "<p>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</p>"
+                                            }
+                                            previousParent.push(tasks[i].id)
+                                            previousPriority.push(tasks[i].priority)
+                                            break
+                                        } else {
+                                            previousPriority.pop()
+                                            previousParent.pop()
+                                        }
+                                    }
+                                }
+                                
+                                subTaskButton = document.createElement("button")
+                                subTaskButton.innerHTML = "Dodaj podnalogo"
+                                subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")") 
+                                    
+                                document.getElementById("activeTasksDiv").appendChild(task);
+                                document.getElementById("activeTasksDiv").appendChild(subTaskButton);
+                            }
+					    }
+					}
+                    
+				}
+            };  
+			xhr4.send(JSON.stringify({"user":window.localStorage.getItem("id"), "status":4}));
+
+            
+        }
+
+        function addRootTask(status){
+            window.localStorage.setItem("status", status);
+            window.localStorage.setItem("parent", 0);
+            window.location = "addTask.html";
+        }
+
+        function sortTasks(tasks){
+            tempArray = []
+
+            for(var i = tasks.length - 1; i >= 0; i--){
+                    
+                if(tasks[i].parent == "0"){
+                    if(tempArray.length == 0){
+                        tempArray.push(tasks[i])
+                        tasks.splice(i, 1)
+                    } else{
+                        for(var j = 0; j < tempArray.length; j++){
+                            if(tempArray[j].priority > tasks[i].priority){
+                                tempArray.splice(j, 0, tasks[i])
+                                tasks.splice(i, 1)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+                
+            var nextElement = false
+            while(tasks.length > 0){
+for(var k = tasks.length - 1; k >= 0; k--){
+    
+    for(var i = 0; i < tempArray.length; i++){
+        if(tempArray[i].id == tasks[k].parent){
+            for(var j = i; j < tempArray.length; j++){
+                if(j+1 == tempArray.length){
+                    tempArray.push(tasks[k])
+                    tasks.splice(k, 1)
+                    nextElement = true;
+                    break
+                } else {
+                if(tempArray[j+1].id != tasks[k].parent && tempArray[j+1].parent != tasks[k].parent){
+                    tempArray.splice(j+1, 0, tasks[k])
+                    tasks.splice(k, 1)
+                    nextElement = true;
+                    break
+                }}
+                if(tempArray[j].parent == tasks[k].parent && tempArray[j].priority > tasks[k].priority){
+                    tempArray.splice(j, 0, tasks[k])
+                    tasks.splice(k, 1)
+                    nextElement = true;
+                    break
+                }
+            }
+        }
+        if(nextElement){
+            break
+        }
+    }
+    nextElement = false
+}
+}
+            return tempArray
+        }
+
+        function openTask(id){
+            window.localStorage.setItem("taskId", id);
+            window.location = "taskDetails.html";
+        }
+
+        function addSubTask(parent, status){
+            window.localStorage.setItem("subTaskParent", parent)
+            window.localStorage.setItem("status", status)
+            window.location = "addtask.html"
+        }
+    </script>
+</html>
