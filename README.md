@@ -18,8 +18,9 @@ Datum: 6. 11. 2025
      - \[numericId(Int32): 4, status(String): "Arhiviran\]
    - zbirko _tasks_
 4. prenesi datoteke iz repozitorija na strežnik
-5. na strežniku nastavi, da strežnik ob zahtevani mapi s projektom vrne datoteko _login.html_
-6. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
+5. v datoteko _config.php_ prepiši podatke za povezavo na bazo podatkov
+6. na strežniku nastavi, da strežnik ob zahtevani mapi s projektom vrne datoteko _login.html_
+7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
 - _v0.1.0_ (6. 11. 2025):
