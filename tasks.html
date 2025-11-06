@@ -328,13 +328,19 @@
                         tempArray.push(tasks[i])
                         tasks.splice(i, 1)
                     } else{
-                        for(var j = 0; j < tempArray.length; j++){
-                            if(tempArray[j].priority > tasks[i].priority){
+                        for(var j = 0; j <= tempArray.length; j++){
+                            if(j == tempArray.length){
                                 tempArray.splice(j, 0, tasks[i])
                                 tasks.splice(i, 1)
                                 break
+                            } else {
+                                if(tempArray[j].priority > tasks[i].priority){
+                                    tempArray.splice(j, 0, tasks[i])
+                                    tasks.splice(i, 1)
+                                    break
+                                }
                             }
-                        }
+                            }
                     }
                 }
             }

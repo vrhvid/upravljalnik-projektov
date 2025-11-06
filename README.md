@@ -1,5 +1,5 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.1.1
+Verzija: 0.1.2
 Datum: 6. 11. 2025
 
 ## Zahteve
@@ -23,6 +23,8 @@ Datum: 6. 11. 2025
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
+- _v0.1.2_ (6. 11. 2025):
+  - popravi napako pri razvrščanju projektov
 - _v0.1.1_ (6. 11. 2025):
   - popravljeno napačno razvrščanje projektov po statusih
 - _v0.1.0_ (5. 11. 2025):
