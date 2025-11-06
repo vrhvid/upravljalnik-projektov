@@ -159,8 +159,8 @@
                                 subTaskButton.innerHTML = "Dodaj podnalogo"
                                 subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")") 
                                     
-                                document.getElementById("activeTasksDiv").appendChild(task);
-                                document.getElementById("activeTasksDiv").appendChild(subTaskButton);
+                                document.getElementById("onHoldTasksDiv").appendChild(task);
+                                document.getElementById("onHoldTasksDiv").appendChild(subTaskButton);
                             }
 					    }
 					}
@@ -229,8 +229,8 @@
                                 subTaskButton.innerHTML = "Dodaj podnalogo"
                                 subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")") 
                                     
-                                document.getElementById("activeTasksDiv").appendChild(task);
-                                document.getElementById("activeTasksDiv").appendChild(subTaskButton);
+                                document.getElementById("ideaTasksDiv").appendChild(task);
+                                document.getElementById("ideaTasksDiv").appendChild(subTaskButton);
                             }
 					    }
 					}
@@ -299,8 +299,8 @@
                                 subTaskButton.innerHTML = "Dodaj podnalogo"
                                 subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")") 
                                     
-                                document.getElementById("activeTasksDiv").appendChild(task);
-                                document.getElementById("activeTasksDiv").appendChild(subTaskButton);
+                                document.getElementById("archiveTasksDiv").appendChild(task);
+                                document.getElementById("archiveTasksDiv").appendChild(subTaskButton);
                             }
 					    }
 					}
