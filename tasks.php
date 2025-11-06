@@ -88,6 +88,7 @@
                         $readResult = $collection->find(
                             [
                                 'parent' => $data["parent"],
+                                'status' => $data["status"],
                             ],
                             []
                         );
