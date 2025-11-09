@@ -99,6 +99,7 @@
             var param = JSON.stringify({"user":window.localStorage.getItem("id"), "status":status})
 			xhr1.send(param);
 
+            var status = 2
             var xhr2= new XMLHttpRequest();
             
             var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
@@ -169,6 +170,7 @@
             };  
 			xhr2.send(JSON.stringify({"user":window.localStorage.getItem("id"), "status":2}));
 
+            var status = 3
             var xhr3= new XMLHttpRequest();
             
             var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
@@ -239,6 +241,7 @@
             };  
 			xhr3.send(JSON.stringify({"user":window.localStorage.getItem("id"), "status":3}));
 
+            var status = 4
             var xhr4= new XMLHttpRequest();
             
             var url = new URL("http://localhost/upravljalnik-projektov/tasks.php"); 
@@ -390,7 +393,7 @@ for(var k = tasks.length - 1; k >= 0; k--){
         function addSubTask(parent, status){
             window.localStorage.setItem("subTaskParent", parent)
             window.localStorage.setItem("status", status)
-            window.location = "addtask.html"
+            window.location = "addTask.html"
         }
     </script>
 </html>
