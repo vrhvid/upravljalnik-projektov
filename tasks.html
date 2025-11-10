@@ -367,8 +367,8 @@ for(var k = tasks.length - 1; k >= 0; k--){
                     nextElement = true;
                     break
                 }}
-                if(tempArray[j].parent == tasks[k].parent && tempArray[j].priority > tasks[k].priority){
-                    tempArray.splice(j, 0, tasks[k])
+                if(tempArray[j+1].parent == tasks[k].parent && tempArray[j+1].priority > tasks[k].priority){
+                    tempArray.splice(j+1, 0, tasks[k])
                     tasks.splice(k, 1)
                     nextElement = true;
                     break

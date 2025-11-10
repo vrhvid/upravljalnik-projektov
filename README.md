@@ -1,6 +1,6 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.1.4  
-Datum: 9. 11. 2025
+Verzija: 0.1.5 
+Datum: 10. 11. 2025
 
 ## Zahteve
 - PHP knjižnica MongoDB
@@ -23,6 +23,8 @@ Datum: 9. 11. 2025
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
+- _v0.1.5_ (10. 11. 2025):
+  - popravi čudno napako, zaradi katere se je program zapletel v neskončno zanko v nekaterih primerih izpisa vseh nalog
 - _v0.1.4_ (9. 11. 2025):
   - popravi napako, zaradi katere so gumbi za dodajanje podnalog vodili na neobstoječo stran
   - popravi napako, zaradi katere so vse podnaloge imele status aktivnega projekta
