@@ -1,6 +1,6 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.1.5 
-Datum: 10. 11. 2025
+Verzija: 0.1.6
+Datum: 22. 11. 2025
 
 ## Zahteve
 - PHP knjižnica MongoDB
@@ -18,11 +18,13 @@ Datum: 10. 11. 2025
      - \[numericId(Int32): 4, status(String): "Arhiviran\]
    - zbirko _tasks_
 4. prenesi datoteke iz repozitorija na strežnik
-5. v datoteko _config.php_ prepiši podatke za povezavo na bazo podatkov
-6. na strežniku nastavi, da strežnik ob zahtevani mapi s projektom vrne datoteko _login.html_
+5. v nastavitvah strežnika nastavi koren mape na datoteko _login.html_ (_ukaz DirectoryIndex login.html_)
+6. na strežniku nastavi okoljske spremenljivke _MDB_PASSWORD, MDB_USER, MDB_DB, MDB_SERVER_
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
+- _v0.1.6_ (22. 11. 2025):
+  - spremeni datoteko _config.php_ tako, da se podatki za povezavo preberejo iz okoljskih spremenljivk strežnika namesto da so vpisani v datoteki
 - _v0.1.5_ (10. 11. 2025):
   - popravi čudno napako, zaradi katere se je program zapletel v neskončno zanko v nekaterih primerih izpisa vseh nalog
 - _v0.1.4_ (9. 11. 2025):
