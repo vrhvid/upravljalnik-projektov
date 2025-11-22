@@ -3,8 +3,8 @@
     global $CFG;
     $CFG = new stdClass();
 
-    $CFG->mdbserver = "MongoDB server name";
-    $CFG->mdbdatabase = "MongoDB database name";
-    $CFG->mdbuser = "MongoDB username";
-    $CFG->mdbpassword = "MongoDb user password";
+    $CFG->mdbserver = getenv("MDB_SERVER");
+    $CFG->mdbdatabase = getenv("MDB_DB");
+    $CFG->mdbuser = getenv("MDB_USER");
+    $CFG->mdbpassword = getenv("MDB_PASSWORD");
 ?>
