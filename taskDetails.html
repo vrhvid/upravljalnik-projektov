@@ -22,8 +22,9 @@
             <input id="extResources" type="text"><br><br>
             <label for="intResources">Lastni viri</label><br>
             <input id="intResources" type="text"><br><br>
-            <input type="submit" value="Posodobi nalogo">
+            <input type="submit" value="Posodobi nalogo"><br><br>
         </form>
+        <button onclick="deleteTask()">Izbriši nalogo</button><br><br>
         <button><a href="tasks.html">Nazaj</a></button>
     </body>
     <script>
@@ -41,7 +42,6 @@
             xhr.onreadystatechange = function (){
                 if (xhr.readyState === 4){
                     if(xhr.status === 200){
-                        console.log(xhr.responseText)
                         var response = JSON.parse(xhr.responseText);
 
                         document.getElementById("name").value = response["name"]
@@ -88,7 +88,25 @@
                 }
             }
             param = JSON.stringify({"id":taskId, "name":name, "description":description, "extResources":extResources, "intResources":intResources, "completed": completed})
-            console.log(param)
+            xhr.send(param)
+        }
+        function deleteTask(){
+            var xhr= new XMLHttpRequest();
+
+            var url = new URL("http://localhost/upravljalnik-projektov/tasks.php");
+            
+            xhr.open("DELETE", url, true); 
+            xhr.setRequestHeader("Accept", "application/json");
+			xhr.setRequestHeader('Content-type', 'application/json');
+				
+			xhr.onreadystatechange = function (){
+			    if (xhr.readyState === 4){
+					if(xhr.status === 200){
+                       window.location = "tasks.html";
+                    }
+                }
+            }
+            param = JSON.stringify({"id":taskId})
             xhr.send(param)
         }
     </script>

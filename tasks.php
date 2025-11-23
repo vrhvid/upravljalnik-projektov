@@ -9,7 +9,7 @@
     $collection = $client->$database->tasks;
 
     $data = json_decode(file_get_contents("php://input"), true);
-
+    
     if($_SERVER['REQUEST_METHOD'] == "POST"){
         if($_REQUEST["action"] == 1){
             $filter = [
@@ -129,5 +129,32 @@
                 ]
             ]
         );
+    } else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
+        if(isset($data["id"])){
+            $collection = $client->$database->tasks;
+            $readResult1 = $collection->findOne(
+                [
+                    '_id' => new MongoDB\BSON\ObjectId((String)$data["id"]),
+                ],
+                []
+            );
+            $updateResult = $collection->updateMany(
+                [
+                    'parent' => $readResult1["parent"],
+                    'priority' => ['$gt' => $readResult1["priority"]]
+                ],
+                [
+                    '$inc' => [
+                        'priority' => -1,
+                    ] 
+                ]
+            );
+
+            $deleteResult = $collection->deleteMany(
+                ['_id' => new MongoDB\BSON\ObjectId((String)$data["id"])
+                ]
+            );
+            http_response_code(200);
+        }
     }
 ?>  
