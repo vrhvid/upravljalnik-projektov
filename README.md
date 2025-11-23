@@ -1,6 +1,6 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.1.6
-Datum: 22. 11. 2025
+Verzija: 0.2.0
+Datum: 23. 11. 2025
 
 ## Zahteve
 - PHP knjižnica MongoDB
@@ -23,6 +23,10 @@ Datum: 22. 11. 2025
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
+- _v0.2.0_ (23. 11. 2025):
+  - doda možnost brisanja nalog 
+  - odstrani nekatere izpise v konzolo brskalnika, ki so ostali od testiranja
+  - posodobi .gitignore datoteko tako da odraža potrebe po verzji 0.1.6
 - _v0.1.6_ (22. 11. 2025):
   - spremeni datoteko _config.php_ tako, da se podatki za povezavo preberejo iz okoljskih spremenljivk strežnika namesto da so vpisani v datoteki
 - _v0.1.5_ (10. 11. 2025):
