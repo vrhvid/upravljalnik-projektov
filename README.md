@@ -1,5 +1,5 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.2.0
+Verzija: 0.2.0   
 Datum: 23. 11. 2025
 
 ## Zahteve
@@ -23,6 +23,8 @@ Datum: 23. 11. 2025
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
+- _v0.3.0_ ():
+  - loči javascript kodo oh HTMLja
 - _v0.2.0_ (23. 11. 2025):
   - doda možnost brisanja nalog 
   - odstrani nekatere izpise v konzolo brskalnika, ki so ostali od testiranja
