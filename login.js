@@ -1,0 +1,30 @@
+function userLogin(){
+    var param = JSON.stringify({"email":document.getElementById("email").value, "password":document.getElementById("password").value});
+            
+    var xhr= new XMLHttpRequest();
+    xhr.open("POST", "login.php", true); 
+	xhr.setRequestHeader("Accept", "application/json");
+	xhr.setRequestHeader('Content-type', 'application/json');
+				
+	xhr.onreadystatechange = function (){
+	    if (xhr.readyState === 4){
+			if(xhr.status === 200){
+				var response = JSON.parse(xhr.responseText);
+                        
+				window.localStorage.setItem("displayName", response["displayName"]);	
+				window.localStorage.setItem("id", response["id"]);
+                window.localStorage.setItem("roles", response["roles"]);
+
+                if(response["roles"][0] == 1){
+                    window.location = "admin.html";
+                } else {
+                    window.location = "tasks.html";
+                }
+			}else{
+				alert("Prijava ni uspela!");
+		    }
+		}
+    };  
+	
+    xhr.send(param);
+}
