@@ -115,15 +115,6 @@
             }
         }
     } else if($_SERVER['REQUEST_METHOD'] == "PUT"){
-        $readResult = $collection->findOne(
-            [
-                '_id' => new MongoDB\BSON\ObjectId((String)$data["id"]),
-            ],
-            []
-        );
-        $previousCompleted = $readResult["completed"];
-        $parent = $readResult["parent"];
-
         $updateResult = $collection->updateOne(
             [
                 "_id" => new MongoDB\BSON\ObjectId($data["id"])
@@ -138,50 +129,6 @@
                 ]
             ]
         );
-        
-        while(true){
-            $allCompleted = true;
-            if(!$previousCompleted && $data['completed']){
-                $readResult = $collection->find(
-                    [
-                        'parent' => $parent,
-                    ],
-                    []
-                );
-                foreach($readResult as $result){
-                    if(!$result["completed"]){
-                        $allCompleted = false;
-                    }
-                }
-            }
-            
-            if($allCompleted){
-                $updateResult = $collection->updateOne(
-                    [
-                        '_id' => new MongoDB\BSON\ObjectId((String)$parent),
-                    ],
-                    [
-                        '$set' =>
-                            [
-                                'completed' => true,
-                            ]
-                    ]
-                );
-
-                $readResult = $collection->findOne(
-                    [
-                        '_id' => new MongoDB\BSON\ObjectId((String)$parent),
-                    ],
-                    []
-                );
-                if($readResult['parent'] == "0"){
-                    break;
-                } else {
-                    $parent = $readResult['parent'];
-                }
-            }
-        }
-        
     } else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
         if(isset($data["id"])){
             $collection = $client->$database->tasks;
