@@ -115,7 +115,18 @@
             }
         }
     } else if($_SERVER['REQUEST_METHOD'] == "PUT"){
-        $updateResult = $collection->updateOne(
+        $readResult = $collection->findOne(
+            [
+                '_id' => new MongoDB\BSON\ObjectId((String)$data["id"]),
+            ],
+            []
+        );
+        $previousCompleted = $readResult["completed"];
+        $parent = $readResult["parent"];
+        $oldStatus = $readResult["status"];
+        $user = $readResult['user'];
+
+        $updateResult = $collection->updateOne(                                                        //posodobitev dokumenta
             [
                 "_id" => new MongoDB\BSON\ObjectId($data["id"])
             ],
@@ -123,12 +134,73 @@
                 '$set' => [
                     'name' => $data['name'],
                     'description' => $data['description'],
+                    'status' => $data['status'],
                     'externalResources' => $data['extResources'],
                     'internalResources' => $data['intResources'],
                     'completed' => $data['completed'],
                 ]
             ]
         );
+        
+        if($oldStatus != $data['status']){                                                            //posodobitev statusa naloge
+            $readResult = $collection->find(
+                [
+                    'user' => $user,
+                    'parent' => "0",
+                    'status' => $data['status'],
+                ]
+            );
+            $lowestPriority = 0;
+            foreach($readResult as $result){
+                if($result['priority'] > $lowestPriority){
+                    $lowestPriority = $result['priority'];
+                }
+            }
+            if($lowestPriority){
+                $updateResult = $collection->updateOne(                                                        //posodobitev dokumenta
+            [
+                "_id" => new MongoDB\BSON\ObjectId($data["id"])
+            ],
+            [
+                '$set' => [
+                    'priority' => $lowestPriority + 1,
+                ]
+            ]
+        );
+            }
+            $readResult = $collection->find(
+                [
+                    'parent' => $data['id'],
+                ]
+            );
+            $tasksForUpdate = [];
+            foreach($readResult as $result){
+                array_push($tasksForUpdate, (String)$result->_id);
+            }
+            $i = 0;
+            while($i < count($tasksForUpdate)){
+                $readResult = $collection->find(
+                    [
+                        'parent' => $tasksForUpdate[$i],
+                    ]
+                );
+                foreach($readResult as $result){
+                    array_push($tasksForUpdate, (String)$result->_id);
+                }
+                $updateResult = $collection->updateOne(
+                    [
+                        '_id' => new MongoDB\BSON\ObjectId((String)$tasksForUpdate[$i]),
+                    ],
+                    [
+                        '$set' =>
+                            [
+                                'status' => $data['status'],
+                            ]
+                    ]
+                );
+                $i++;
+            }
+        }
     } else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
         if(isset($data["id"])){
             $collection = $client->$database->tasks;
