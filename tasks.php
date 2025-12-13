@@ -45,26 +45,19 @@
             $filter = [
                     '_id' => new MongoDB\BSON\ObjectId((String)$data["taskId"])
             ];
-            $readResult1 = $collection->findOne(
+            $readResult = $collection->findOne(
                 $filter,
                 []
             );
-            $collection = $client->$database->status;
-            $readResult2 = $collection->findOne(
-                [
-                    'numericId' => $readResult1["status"]
-                ],
-                []
-            );
-            $taskarray = [];
             $task = array(
-                "name"=>$readResult1["name"], 
-                "description"=>$readResult1["description"], 
-                "externalResources"=>$readResult1["externalResources"],
-                "internalResources"=>$readResult1["internalResources"],
-                "status"=>$readResult2["status"],
-                "priority"=>$readResult1["priority"],
-                "completed"=>$readResult1["completed"],
+                "name"=>$readResult["name"], 
+                "description"=>$readResult["description"], 
+                "parent"=>$readResult["parent"],
+                "externalResources"=>$readResult["externalResources"],
+                "internalResources"=>$readResult["internalResources"],
+                "status"=>$readResult["status"],
+                "priority"=>$readResult["priority"],
+                "completed"=>$readResult["completed"],
             );
             echo(json_encode($task));
             http_response_code(200);
@@ -123,8 +116,10 @@
         );
         $previousCompleted = $readResult["completed"];
         $parent = $readResult["parent"];
+        $oldStatus = $readResult["status"];
+        $user = $readResult['user'];
 
-        $updateResult = $collection->updateOne(
+        $updateResult = $collection->updateOne(                                                        //posodobitev dokumenta
             [
                 "_id" => new MongoDB\BSON\ObjectId($data["id"])
             ],
@@ -132,6 +127,7 @@
                 '$set' => [
                     'name' => $data['name'],
                     'description' => $data['description'],
+                    'status' => $data['status'],
                     'externalResources' => $data['extResources'],
                     'internalResources' => $data['intResources'],
                     'completed' => $data['completed'],
@@ -139,49 +135,66 @@
             ]
         );
         
-        while(true){
-            $allCompleted = true;
-            if(!$previousCompleted && $data['completed']){
-                $readResult = $collection->find(
-                    [
-                        'parent' => $parent,
-                    ],
-                    []
-                );
-                foreach($readResult as $result){
-                    if(!$result["completed"]){
-                        $allCompleted = false;
-                    }
+        if($oldStatus != $data['status']){                                                            //posodobitev statusa naloge
+            $readResult = $collection->find(
+                [
+                    'user' => $user,
+                    'parent' => "0",
+                    'status' => $data['status'],
+                ]
+            );
+            
+            $lowestPriority = 0;
+            foreach($readResult as $result){
+                if($result['priority'] > $lowestPriority){
+                    $lowestPriority = $result['priority'];
                 }
             }
             
-            if($allCompleted){
+            $updateResult = $collection->updateOne(                                                        
+                [
+                    "_id" => new MongoDB\BSON\ObjectId($data["id"])
+                ],
+                [
+                    '$set' => [
+                        'priority' => $lowestPriority + 1,
+                    ]
+                ]
+            );
+            
+            $readResult = $collection->find(
+                [
+                    'parent' => $data['id'],
+                ]
+            );
+            $tasksForUpdate = [];
+            foreach($readResult as $result){
+                array_push($tasksForUpdate, (String)$result->_id);
+            }
+            $i = 0;
+            while($i < count($tasksForUpdate)){
+                $readResult = $collection->find(
+                    [
+                        'parent' => $tasksForUpdate[$i],
+                    ]
+                );
+                foreach($readResult as $result){
+                    array_push($tasksForUpdate, (String)$result->_id);
+                }
                 $updateResult = $collection->updateOne(
                     [
-                        '_id' => new MongoDB\BSON\ObjectId((String)$parent),
+                        '_id' => new MongoDB\BSON\ObjectId((String)$tasksForUpdate[$i]),
                     ],
                     [
                         '$set' =>
                             [
-                                'completed' => true,
+                                'status' => $data['status'],
                             ]
                     ]
                 );
-
-                $readResult = $collection->findOne(
-                    [
-                        '_id' => new MongoDB\BSON\ObjectId((String)$parent),
-                    ],
-                    []
-                );
-                if($readResult['parent'] == "0"){
-                    break;
-                } else {
-                    $parent = $readResult['parent'];
-                }
+                $i++;
             }
         }
-        
     } else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
         if(isset($data["id"])){
             $collection = $client->$database->tasks;

@@ -1,4 +1,5 @@
 var taskId = window.localStorage.getItem("taskId");
+var oldStatus;
 
 window.onload = function(){
     var xhr= new XMLHttpRequest();
@@ -17,9 +18,15 @@ window.onload = function(){
 
                 document.getElementById("name").value = response["name"];
                 document.getElementById("description").value = response["description"];
-                document.getElementById("status").innerHTML = response["status"];
+
+                document.getElementById(response["status"]).setAttribute("selected", "selected");
+
+                if(response["parent"] != "0"){
+                    document.getElementById("status").setAttribute("disabled", "disabled");
+                }
+
                 document.getElementById("priority").innerHTML = response["priority"];
-                document.getElementById("extResources").value = response["externalresources"];
+                document.getElementById("extResources").value = response["externalResources"];
                 document.getElementById("intResources").value = response["internalResources"];
                 
                 if(response["completed"]){
@@ -37,6 +44,12 @@ window.onload = function(){
 function updateTask(){
     var name = document.getElementById("name").value;
     var description = document.getElementById("description").value;
+    
+    var status = Number(document.getElementById("status").value);
+    if(status == 3 || status == 4){
+        status = oldStatus;
+        alert("Željeni status ni podprt!");
+    }
     var extResources = document.getElementById("extResources").value;
     var intResources = document.getElementById("intResources").value;
     
@@ -62,7 +75,7 @@ function updateTask(){
         }
     }
     
-    param = JSON.stringify({"id":taskId, "name":name, "description":description, "extResources":extResources, "intResources":intResources, "completed": completed});
+    param = JSON.stringify({"id":taskId, "name":name, "description":description, "status":status, "extResources":extResources, "intResources":intResources, "completed": completed});
     xhr.send(param);
 }
 
