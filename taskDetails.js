@@ -18,13 +18,15 @@ window.onload = function(){
 
                 document.getElementById("name").value = response["name"];
                 document.getElementById("description").value = response["description"];
-                
-                oldStatus = response["numericStatus"];
-                console.log(oldStatus)
-                document.getElementById(Number(oldStatus)).setAttribute("selected", "selected");
+
+                document.getElementById(response["status"]).setAttribute("selected", "selected");
+
+                if(response["parent"] != "0"){
+                    document.getElementById("status").setAttribute("disabled", "disabled");
+                }
 
                 document.getElementById("priority").innerHTML = response["priority"];
-                document.getElementById("extResources").value = response["externalresources"];
+                document.getElementById("extResources").value = response["externalResources"];
                 document.getElementById("intResources").value = response["internalResources"];
                 
                 if(response["completed"]){

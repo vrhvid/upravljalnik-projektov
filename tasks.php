@@ -45,26 +45,19 @@
             $filter = [
                     '_id' => new MongoDB\BSON\ObjectId((String)$data["taskId"])
             ];
-            $readResult1 = $collection->findOne(
+            $readResult = $collection->findOne(
                 $filter,
                 []
             );
-            $collection = $client->$database->status;
-            $readResult2 = $collection->findOne(
-                [
-                    'numericId' => $readResult1["status"]
-                ],
-                []
-            );
-            $taskarray = [];
             $task = array(
-                "name"=>$readResult1["name"], 
-                "description"=>$readResult1["description"], 
-                "externalResources"=>$readResult1["externalResources"],
-                "internalResources"=>$readResult1["internalResources"],
-                "status"=>$readResult2["status"],
-                "priority"=>$readResult1["priority"],
-                "completed"=>$readResult1["completed"],
+                "name"=>$readResult["name"], 
+                "description"=>$readResult["description"], 
+                "parent"=>$readResult["parent"],
+                "externalResources"=>$readResult["externalResources"],
+                "internalResources"=>$readResult["internalResources"],
+                "status"=>$readResult["status"],
+                "priority"=>$readResult["priority"],
+                "completed"=>$readResult["completed"],
             );
             echo(json_encode($task));
             http_response_code(200);
@@ -150,24 +143,25 @@
                     'status' => $data['status'],
                 ]
             );
+            
             $lowestPriority = 0;
             foreach($readResult as $result){
                 if($result['priority'] > $lowestPriority){
                     $lowestPriority = $result['priority'];
                 }
             }
-            if($lowestPriority){
-                $updateResult = $collection->updateOne(                                                        //posodobitev dokumenta
-            [
-                "_id" => new MongoDB\BSON\ObjectId($data["id"])
-            ],
-            [
-                '$set' => [
-                    'priority' => $lowestPriority + 1,
+            
+            $updateResult = $collection->updateOne(                                                        
+                [
+                    "_id" => new MongoDB\BSON\ObjectId($data["id"])
+                ],
+                [
+                    '$set' => [
+                        'priority' => $lowestPriority + 1,
+                    ]
                 ]
-            ]
-        );
-            }
+            );
+            
             $readResult = $collection->find(
                 [
                     'parent' => $data['id'],

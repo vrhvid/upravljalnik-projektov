@@ -1,6 +1,6 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.3.0   
-Datum: 4. 12. 2025
+Verzija: 0.4.0   
+Datum: 13. 12. 2025
 
 ## Zahteve
 - PHP knjižnica MongoDB
@@ -23,8 +23,10 @@ Datum: 4. 12. 2025
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
-- _v0.4.0_ ():
+- _v0.4.0_ (13. 12. 2025):
   - odstrani avtomatsko opravljanje nadrejenih nalog
+  - doda možnost spreminjanja statusa projekta
+  - popravi nedelovanje dodajanja zunanjih virov
 - _v0.3.0_ (4. 12. 2025):
   - loči javascript kodo oh HTMLja
   - doda avtomatsko opravljanje nadrejenih nalog v primeru, da so opravljene vse podrejene naloge
