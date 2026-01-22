@@ -1,6 +1,6 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.4.0   
-Datum: 13. 12. 2025
+Verzija: 0.5.0   
+Datum: 22. 1. 2025
 
 ## Zahteve
 - PHP knjižnica MongoDB
