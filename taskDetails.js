@@ -15,25 +15,37 @@ window.onload = function(){
         if (xhr.readyState === 4){
             if(xhr.status === 200){
                 var response = JSON.parse(xhr.responseText);
+                    
+                    oldStatus = response["status"];
 
-                document.getElementById("name").value = response["name"];
-                document.getElementById("description").value = response["description"];
+                    document.getElementById("name").value = response["name"];
+                    document.getElementById("description").value = response["description"];
 
-                document.getElementById(response["status"]).setAttribute("selected", "selected");
+                    document.getElementById(response["status"]).setAttribute("selected", "selected");
 
-                if(response["parent"] != "0"){
-                    document.getElementById("status").setAttribute("disabled", "disabled");
-                }
+                    if(response["parent"] != "0"){
+                        document.getElementById("status").setAttribute("disabled", "disabled");
+                    }
 
-                document.getElementById("priority").innerHTML = response["priority"];
-                document.getElementById("extResources").value = response["externalResources"];
-                document.getElementById("intResources").value = response["internalResources"];
-                
-                if(response["completed"]){
-                    document.getElementById("completed").setAttribute("selected", "selected");
-                } else {
-                    document.getElementById("notCompleted").setAttribute("selected", "selected");
-                }
+                    document.getElementById("priority").innerHTML = response["priority"];
+                    document.getElementById("extResources").value = response["externalResources"];
+                    document.getElementById("intResources").value = response["internalResources"];
+                    
+                    if(response["completed"]){
+                        document.getElementById("completed").setAttribute("selected", "selected");
+                    } else {
+                        document.getElementById("notCompleted").setAttribute("selected", "selected");
+                    }
+                    
+                    document.getElementById("archiveName").innerHTML = "Naslov: " + response["name"];               //div za arhivirane naloge
+                    document.getElementById("archiveDescription").innerHTML = "Opis: " + response["description"];
+
+                    if(response["status"] != 4){
+                        document.getElementById("active").style.display = "block";
+                    } else {
+                        document.getElementById("archive").style.display = "block";
+                    }
+                    
             }
         }
     }
@@ -41,15 +53,20 @@ window.onload = function(){
     xhr.send(JSON.stringify({"taskId":taskId}));
 }
 
-function updateTask(){
+function updateTask(passedStatus = 0){
     var name = document.getElementById("name").value;
     var description = document.getElementById("description").value;
     
-    var status = Number(document.getElementById("status").value);
-    if(status == 3 || status == 4){
-        status = oldStatus;
-        alert("Željeni status ni podprt!");
+    if(passedStatus == 0){
+        var status = Number(document.getElementById("status").value);
+        if(status == 3){
+            status = oldStatus;
+            alert("Željeni status ni podprt!");
+        }
+    } else {
+        var status = 1;
     }
+
     var extResources = document.getElementById("extResources").value;
     var intResources = document.getElementById("intResources").value;
     
@@ -98,4 +115,8 @@ function deleteTask(){
     
     param = JSON.stringify({"id":taskId});
     xhr.send(param);
+}
+
+function unArchiveTask(){
+
 }

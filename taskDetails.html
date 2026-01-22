@@ -5,31 +5,39 @@
         <script src="taskDetails.js"></script>
     </head>
     <body>
-        <form onsubmit="event.preventDefault(); updateTask();">
-            <label for="isCompleted">Stanje:</label><br>
-            <select id="isCompleted">
-                <option id="notCompleted" value="1">Neopravljen</option>
-                <option id="completed" value="2">Opravljena</option>
-            </select><br><br>
-            <label for="name">Naslov:</label><br>
-            <input id="name" type="text" size="55" maxlength="50"><br><br>
-            <label for="description">Opis:</label><br>
-            <input id="description" type="text" size="505" maxlength="500"><br><br>
-            <select id="status">
-                <option id="1" value=1>Aktiven</option>
-                <option id="2" value=2>Na čakanju</option>
-                <option id="3" value=3>Ideja</option>
-                <option id="4" value=4>Arhiviran</option>
-            </select><br><br>
-            <label for="priority">Prioriteta:</label><br>
-            <p id="priority"></p>
-            <label for="extResources">Zunanji viri</label><br>
-            <input id="extResources" type="text"><br><br>
-            <label for="intResources">Lastni viri</label><br>
-            <input id="intResources" type="text"><br><br>
-            <input type="submit" value="Posodobi nalogo"><br><br>
-        </form>
-        <button onclick="deleteTask()">Izbriši nalogo</button><br><br>
-        <button><a href="tasks.html">Nazaj</a></button>
+        <div id="active" style="display: none">
+            <form onsubmit="event.preventDefault(); updateTask();">
+                <label for="isCompleted">Stanje:</label><br>
+                <select id="isCompleted">
+                    <option id="notCompleted" value="1">Neopravljen</option>
+                    <option id="completed" value="2">Opravljena</option>
+                </select><br><br>
+                <label for="name">Naslov:</label><br>
+                <input id="name" type="text" size="55" maxlength="50"><br><br>
+                <label for="description">Opis:</label><br>
+                <input id="description" type="text" size="505" maxlength="500"><br><br>
+                <select id="status">
+                    <option id="1" value=1>Aktiven</option>
+                    <option id="2" value=2>Na čakanju</option>
+                    <option id="3" value=3>Ideja</option>
+                    <option id="4" value=4>Arhiviran</option>
+                </select><br><br>
+                <label for="priority">Prioriteta:</label><br>
+                <p id="priority"></p>
+                <label for="extResources">Zunanji viri</label><br>
+                <input id="extResources" type="text"><br><br>
+                <label for="intResources">Lastni viri</label><br>
+                <input id="intResources" type="text"><br><br>
+                <input type="submit" value="Posodobi nalogo"><br><br>
+            </form>
+            <button onclick="deleteTask()">Izbriši nalogo</button><br><br>
+            <button><a href="tasks.html">Nazaj</a></button>
+        </div>
+        <div id="archive" style="display: none">
+            <p id="archiveName"></p>
+            <p id="archiveDescription"></p>
+            <button onclick="updateTask(4)">Ponovno aktiviraj nalogo</button><br>
+            <button><a href="tasks.html">Nazaj</a></button>
+        </div>
     </body>
 </html>
