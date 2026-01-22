@@ -246,60 +246,21 @@ window.onload = function(){
                         
                 var response = JSON.parse(xhr4.responseText);
                 if(response != null){
-                    var status = 4;
                     tasks = [];
                             
                     for(var i = 0; i < response.length; i++){
-                        tasks.push({id:response[i]["taskid"], name:response[i]["name"], description:response[i]["description"], parent:response[i]["parent"],priority:response[i]["priority"], internalResources:response[i]["internalResources"], externalResources:response[i]["externalResources"], completed:response[i]["completed"]});
+                        tasks.push({id:response[i]["taskid"], name:response[i]["name"],priority:response[i]["priority"], parent:"0"});
                     }
                     
                     tasks = sortTasks(tasks);
                             
-                    var previousPriority = [];
-                    var previousParent = [];
                     for(var i = 0; i < tasks.length; i++){
                         task = document.createElement("p");
                         task.setAttribute("onclick", "openTask(\"" + tasks[i].id + "\")");
-                                
-                        if(tasks[i].parent == "0"){
-                            if(tasks[i].completed){
-                                task.innerHTML = "<p><del>" + tasks[i].priority + " " + tasks[i].name + "</del></p>";
-                            } else {
-                                task.innerHTML = "<p>" + tasks[i].priority + " " + tasks[i].name + "</p>";
-                            }
-                            previousParent = [tasks[i].id];
-                            previousPriority = [tasks[i].priority];
-                        } else {
-                            while(true){
-                                if(tasks[i].parent == previousParent[previousParent.length - 1]){
-                                    var priorityString = "";
-                                            
-                                    for(var j = 0; j < previousPriority.length; j++){
-                                        priorityString = priorityString + previousPriority[j] + ". ";
-                                    }
-                                            
-                                    if(tasks[i].completed){
-                                        task.innerHTML = "<p><del>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</del></p>";
-                                    } else {
-                                        task.innerHTML = "<p>" + priorityString + tasks[i].priority + " " + tasks[i].name + "</p>";
-                                    }
-                                            
-                                    previousParent.push(tasks[i].id);
-                                    previousPriority.push(tasks[i].priority);
-                                    break;
-                                } else {
-                                    previousPriority.pop();
-                                    previousParent.pop();
-                                }
-                            }
-                        }
-                                
-                        subTaskButton = document.createElement("button");
-                        subTaskButton.innerHTML = "Dodaj podnalogo";
-                        subTaskButton.setAttribute("onclick", "addSubTask(\"" + tasks[i].id + "\", " + status + ")");
+                
+                        task.innerHTML = "<p>" + tasks[i].name + "</p>";
                                     
                         document.getElementById("archiveTasksDiv").appendChild(task);
-                        document.getElementById("archiveTasksDiv").appendChild(subTaskButton);
                     }
 				}
 			}   

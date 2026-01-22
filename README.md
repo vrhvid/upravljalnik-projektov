@@ -23,6 +23,8 @@ Datum: 13. 12. 2025
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
+- _v0.5.0_ (22. 1. 2026):
+  - doda arhiviranje in ponovno arhiviranje nalog
 - _v0.4.0_ (13. 12. 2025):
   - odstrani avtomatsko opravljanje nadrejenih nalog
   - doda možnost spreminjanja statusa projekta

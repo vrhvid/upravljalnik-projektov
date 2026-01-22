@@ -12,10 +12,18 @@
     
     if($_SERVER['REQUEST_METHOD'] == "POST"){
         if($_REQUEST["action"] == 1){
-            $filter = [
+            if($data['status'] == 4){
+                $filter = [
                 'user' => new MongoDB\BSON\ObjectID($data["user"]),
-                'status' => $data["status"]
+                'status' => $data["status"],
+                'parent' => "0"
             ];
+            } else {
+                $filter = [
+                    'user' => new MongoDB\BSON\ObjectID($data["user"]),
+                    'status' => $data["status"]
+                ];
+            }
             if($collection->countDocuments($filter,[]) == 0){
                 echo(json_encode(null));
                 http_response_code(200);
@@ -114,27 +122,10 @@
             ],
             []
         );
-        $previousCompleted = $readResult["completed"];
         $parent = $readResult["parent"];
         $oldStatus = $readResult["status"];
         $user = $readResult['user'];
 
-        $updateResult = $collection->updateOne(                                                        //posodobitev dokumenta
-            [
-                "_id" => new MongoDB\BSON\ObjectId($data["id"])
-            ],
-            [
-                '$set' => [
-                    'name' => $data['name'],
-                    'description' => $data['description'],
-                    'status' => $data['status'],
-                    'externalResources' => $data['extResources'],
-                    'internalResources' => $data['intResources'],
-                    'completed' => $data['completed'],
-                ]
-            ]
-        );
-        
         if($oldStatus != $data['status']){                                                            //posodobitev statusa naloge
             $readResult = $collection->find(
                 [
@@ -150,15 +141,34 @@
                     $lowestPriority = $result['priority'];
                 }
             }
-            
-            $updateResult = $collection->updateOne(                                                        
+            $lowestPriority++;
+        } else {
+            $lowestPriority = $data['priority'];
+        }
+
+        $updateResult = $collection->updateOne(                                                        //posodobitev dokumenta
+            [
+                "_id" => new MongoDB\BSON\ObjectId($data["id"])
+            ],
+            [
+                '$set' => [
+                    'name' => $data['name'],
+                    'description' => $data['description'],
+                    'status' => $data['status'],
+                    'priority' => $lowestPriority,
+                    'externalResources' => $data['extResources'],
+                    'internalResources' => $data['intResources'],
+                    'completed' => $data['completed'],
+                ]
+            ]
+        );
+        
+        if($oldStatus != $data['status']){                                                            //posodobitev statusa naloge
+            $readResult = $collection->find(
                 [
-                    "_id" => new MongoDB\BSON\ObjectId($data["id"])
-                ],
-                [
-                    '$set' => [
-                        'priority' => $lowestPriority + 1,
-                    ]
+                    'user' => $user,
+                    'parent' => "0",
+                    'status' => $data['status'],
                 ]
             );
             
