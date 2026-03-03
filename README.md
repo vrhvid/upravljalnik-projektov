@@ -1,6 +1,6 @@
 # Aplikacija za upravljanje projektov
-Verzija: 0.5.0   
-Datum: 22. 1. 2025
+Verzija: 0.5.1   
+Datum: 4. 3. 2026
 
 ## Zahteve
 - PHP knjižnica MongoDB
@@ -23,6 +23,8 @@ Datum: 22. 1. 2025
 7. v spletno mesto se prijavi z administratorskim računom, preko katerega ustvari uporabniški račun
 
 ## Spremembe
+- _v0.5.1_ (4. 3. 2026):
+  - popravi napako, zaradi katere so naloge ob posodobitvi dobile prioriteto "null"
 - _v0.5.0_ (22. 1. 2026):
   - doda arhiviranje in ponovno arhiviranje nalog
 - _v0.4.0_ (13. 12. 2025):

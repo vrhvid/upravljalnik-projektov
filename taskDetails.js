@@ -56,6 +56,7 @@ window.onload = function(){
 function updateTask(passedStatus = 0){
     var name = document.getElementById("name").value;
     var description = document.getElementById("description").value;
+    var priority = document.getElementById("priority").innerHTML
     
     if(passedStatus == 0){
         var status = Number(document.getElementById("status").value);
@@ -92,7 +93,7 @@ function updateTask(passedStatus = 0){
         }
     }
     
-    param = JSON.stringify({"id":taskId, "name":name, "description":description, "status":status, "extResources":extResources, "intResources":intResources, "completed": completed});
+    param = JSON.stringify({"id":taskId, "name":name, "description":description, "status":status, "priority":priority, "extResources":extResources, "intResources":intResources, "completed": completed});
     xhr.send(param);
 }
 
